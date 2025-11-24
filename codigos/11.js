@@ -1,0 +1,17 @@
+function principal(){
+    let array = [83, 6, 90, 64, 13, 75, 42, 95, 54, 50, 9, 10, 4, 72, 29, 84, 42, 67, 66, 40]
+
+    let numeroProcurado = 29
+    let achado = false
+    for(let i = 0; i < array.length; i++){
+        if(array[i] === numeroProcurado){
+            console.log(`Número procurado (${numeroProcurado}) achado na posição ${i} da array`)
+            achado = true
+        }
+    }
+    if(achado == false){
+        console.log(`Número não encontrado`)
+    }
+}
+
+principal()

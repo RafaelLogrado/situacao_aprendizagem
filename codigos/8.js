@@ -3,9 +3,16 @@ function gerarAleatorio(min, max){
 }
 
 function principal(){
-    let arr = gerarArray(10, 1, 220)
-    console.log(`Array gerada: ${arr}`)
-    console.log(`Soma dos elementos da array: ${somaArray(arr)}`)
+    let mat = []
+    for(let i = 0; i < 3; i++){
+        mat[i] = []
+        for(let j = 0; j < 3; j++){
+            mat[i][j] = gerarAleatorio(1, 20)
+        }
+    }
+
+    console.log(`Matriz gerada:`)
+    console.table(mat)
 }
 
 principal()
