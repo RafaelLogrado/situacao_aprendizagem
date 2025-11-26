@@ -66,6 +66,14 @@ h2{
 }
 
 
+.separador{
+    width: 100%;
+    height: 3px;
+    background-color: #e7a515;
+    margin-bottom: 45px;
+}
+
+
 .caixa-texto{
 	background: #020a1c;
 	border: 3px solid #e7a515;
