@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style_codigo.css">
+    <title>Scripts</title>
+</head>
+<body>
+    <header>
+        <div class="centro">
+            <nav>
+                <a href="../scripts_redes.html">Voltar</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <pre><code>
+    const express = require('express')
+    const app = express()
+    const cors = require('cors')
+
+    const PORT = 3000 // endereço TCP
+    const hostname = 'localhost' // 127.0.0.1 endereço IP
+
+    // --------- middleware ------------------------
+    app.use(express.urlencoded({extended: true}))
+    app.use(express.json())
+    app.use(cors())
+    // ---------------------------------------------
+
+
+    app.get('/', (req,res)=>{
+        res.status(200).json({message: 'aplicação rodando'})
+    })
+    app.get('/teste', (req,res)=>{
+        const nome = 'Ueslei' 
+        res.status(200).json({message: 'mensagem do nome:', nome})
+    })
+
+    app.post('/usuario', (req,res)=>{
+        const valores = req.body
+        console.log(valores)
+
+        res.status(200).json({message: 'dados recebidos!'})
+    })
+
+    // --------------------------------------------
+    app.listen(PORT,hostname, ()=>{
+        console.log(`Servidor http://${hostname}:${PORT}`)
+    })
+        </code></pre>
+    </main>
+    <footer>
+        Copyright &copy; 2025 TechInfo. Todos direitos reservados para TechInfo&trade;
+    </footer>
+</body>
+</html>

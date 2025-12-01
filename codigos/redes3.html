@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style_codigo.css">
+    <title>Scripts</title>
+</head>
+<body>
+    <header>
+        <div class="centro">
+            <nav>
+                <a href="../scripts_redes.html">Voltar</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <h1>index.js</h1>
+        <pre><code>
+    const express = require('express')
+    const app = express()
+    const { SerialPort, ReadlineParser } = require('serialport')
+    const readline = require('readline')
+
+    const cors = require('cors')
+
+    const PORT = 3000   // PORT do protocolo TCP
+    const hostname = 'localhost'    // nome do Computador e seu IP = 127.0.0.1 (IP de teste)
+
+    const BAUD_RATE = 9600
+    const SERIAL_PORT = "COM9"
+
+    // ------ config de Middleware ----------
+    app.use(express.urlencoded({extended: true}))
+    app.use(express.json())
+    app.use(cors())
+
+    // -------- INICIALIZAÇÃO ARDUINO -------------
+    const arduino = new SerialPort({
+        path: SERIAL_PORT,
+        baudRate: BAUD_RATE,
+    })
+
+    const parserDados = arduino.pipe(new ReadlineParser({delimiter: "\r\n"}))
+
+    arduino.on("open", ()=>{
+        console.log(`Conectado ao Arduino em ${SERIAL_PORT}`)
+    })
+
+    arduino.on("error", (err)=>{
+        console.error('Erro na comunicação serial', err)
+    })
+
+    // --- parser das linhas: garantir a recepção completa dos dados
+    parserDados.on("dados", (dad)=>{
+        const linha = dad.toString().trim()
+
+        if(linha > 0){
+            console.log('Arduino: ',linha)
+        }
+    })
+
+    // -------- leitura do teclado para testes / troca de dados manuais -----------
+
+    const teclado = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    })
+
+    teclado.on("line", (input)=>{
+        const comando2 = input.trim()
+
+        if(comando2 === 's' || comando2 === 'd'){
+            arduino.write(comando2, (err)=>{
+                if(err){
+                    console.error("Erro ao enviar ocomando pelo teclado: ", err)
+                }else{
+                    console.log(`Comando: ${comando2} enviado ao arduino via teclado`)
+                }
+            })
+        }else{
+            console.log("Digite 's' (ligar) ou 'd' (desligar) ")
+        }
+    })
+
+    // ------- programando as rotas http => endpoints -----
+
+    app.get('/ligar', (req,res)=>{
+        arduino.write("s", (err)=>{
+            if(err){
+                console.error("Erro ao escrever no arduino: ", err)
+                return res.status(500).json({ led: "erro", detalhe: "falha ao enviar o comando"})
+            }
+        })
+        res.status(200).json({ led: "ligado"})
+    })
+
+    app.get('/desligar', (req,res)=>{
+        arduino.write("d", (err)=>{
+            if(err){
+                console.error("Erro ao escrever no arduino: ", err)
+                return res.status(500).json({ led: "erro", detalhe: "falha ao enviar o comando"})
+            }
+        })
+        res.status(200).json({ led: "desligado"})
+    })
+
+
+
+
+    app.listen(PORT, hostname, ()=>{
+        console.log(`Servidor rodando em ${hostname}:${PORT}`)
+        console.log("Digite 's' para ligar e 'd' para desligar")
+        console.log('-------------------------------------------')
+    })
+        </code></pre>
+        <h1>liga_led.js</h1>
+        <code><pre>
+    const btnLigar = document.getElementById("btnLigar")
+    const btnDesligar = document.getElementById("btnDesligar")
+    const statusDiv = document.getElementById("status")
+
+    // Função para atualizar o texto do status
+    function atualizarStatus(msg) {
+        statusDiv.textContent = "Status: " + msg
+
+        // Remove classes antigas para ajuste da cor
+        statusDiv.classList.remove("status-verde", "status-vermelho", "status-branco")
+
+        // Aplica cor conforme a mensagem
+        if (msg.toLowerCase() === "ligado") {
+            statusDiv.classList.add("status-verde")
+        } else if (msg.toLowerCase() === "desligado") {
+            statusDiv.classList.add("status-vermelho")
+        } else {
+            statusDiv.classList.add("status-branco") // aguardando 
+        }
+    }
+
+    // ----- Botão Ligar -----
+    btnLigar.addEventListener("click", async () => {
+        try {
+            const resposta = await fetch("http://localhost:3000/ligar")
+            const json = await resposta.json()
+            atualizarStatus(json.led.toUpperCase())
+        } catch (error) {
+            atualizarStatus("Erro ao conectar")
+        }
+    })
+
+    // ----- Botão Desligar -----
+    btnDesligar.addEventListener("click", async () => {
+        try {
+            const resposta = await fetch("http://localhost:3000/desligar");
+            const json = await resposta.json()
+            atualizarStatus(json.led.toUpperCase())
+        } catch (error) {
+            atualizarStatus("Erro ao conectar")
+        }
+    })
+        </pre></code>
+    </main>
+    <footer>
+        Copyright &copy; 2025 TechInfo. Todos direitos reservados para TechInfo&trade;
+    </footer>
+</body>
+</html>

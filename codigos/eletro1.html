@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style_codigo.css">
+    <title>Scripts</title>
+</head>
+<body>
+    <header>
+        <div class="centro">
+            <nav>
+                <a href="../scripts_eletro.html">Voltar</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <pre><code>
+function descobrirResistencia(tensao, corrente){
+    return tensao / corrente
+}
+
+function descobrirTensao(resistencia, corrente){
+    return resistencia * corrente
+}
+
+function descobrirCorrente(tensao, resistencia){
+    return tensao / resistencia
+}
+
+function principal(){
+    let resistencia = 25
+    let tensao = 220
+    let corrente = 8.8
+
+    console.log(`Descobrindo a corrente a partir da tensão 'V' e resistência 'R': ${descobrirCorrente(tensao, resistencia)}`)
+    console.log(`Descobrindo a tensão a partir da resistência 'R' e corrente 'I': ${descobrirTensao(resistencia, corrente)}`)
+    console.log(`Descobrindo a corrente a partir da tensão 'V' e corrente 'I': ${descobrirResistencia(tensao, corrente)}`)
+}
+
+principal()
+        </code></pre>
+    </main>
+    <footer>
+        Copyright &copy; 2025 TechInfo. Todos direitos reservados para TechInfo&trade;
+    </footer>
+</body>
+</html>
